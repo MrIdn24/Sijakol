@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:http/http.dart';
 import 'package:flutter/services.dart';
+import 'package:sijakol/helper/base_url.dart';
 import 'package:sijakol/main.dart';
 import 'package:sijakol/response/login_response.dart';
 
@@ -13,7 +14,7 @@ class AuthProvider extends ChangeNotifier {
   LoginResponse get loginResponse => _loginResponse;
 
   Future<bool> loginUser(String email, String password) async {
-    var endpointUrl = "https://7159-103-177-93-210.ngrok-free.app/api/login";
+    var endpointUrl = BaseUrl().baseURL + "/api/login";
     final uri = Uri.parse(endpointUrl);
     var body = {
       'email': email,

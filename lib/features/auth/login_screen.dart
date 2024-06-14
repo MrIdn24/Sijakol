@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sijakol/features/home_screen.dart';
-import 'package:sijakol/features/utils/basic_alert.dart';
+import 'package:sijakol/helper/basic_alert.dart';
 import 'package:sijakol/helper/colors.dart';
 import 'package:sijakol/helper/user_default.dart';
 import 'package:sijakol/providers/auth_provider.dart';
@@ -18,8 +18,11 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+extension ProviderExtension on BuildContext {
+  AuthProvider get authProvider => Provider.of<AuthProvider>(this, listen: false);
+}
+
 class _LoginScreenState extends State<LoginScreen> {
-  AuthProvider authProvider = AuthProvider();
   UserDefault userDefault = UserDefault();
   BasicAlert _basicAlert = BasicAlert();
 
@@ -34,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -194,24 +196,26 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submitLogin() async {
     _basicAlert.showBasicAlert(BasicState.loading, null);
 
-    bool loginSuccess = await authProvider.doLogin(email, password);
+    bool loginSuccess = await context.authProvider.doLogin(email, password);
     if (loginSuccess) {
       await _basicAlert.showBasicAlert(
           BasicState.success,
-          authProvider.loginResponse.message
+          context.authProvider.loginResponse.message
       ).then((_) {
-        if (authProvider.loginResponse.data != null) {
-          LoginDataUser response = authProvider.loginResponse.data!;
+        if (context.authProvider.loginResponse.data != null) {
+          LoginDataUser response = context.authProvider.loginResponse.data!;
           userDefault.saveUserDefaults([
             response.name,
             response.email,
-            response.token
+            response.token,
+            response.kelas_name,
+            response.kelas_id.toString(),
           ]);
         }
         _directSuccesLogin();
       },);
     }else {
-      _basicAlert.showBasicAlert(BasicState.error, authProvider.loginResponse.message);
+      _basicAlert.showBasicAlert(BasicState.error, context.authProvider.loginResponse.message);
     }
   }
 

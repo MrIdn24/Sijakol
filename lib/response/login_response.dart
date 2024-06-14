@@ -24,13 +24,24 @@ class LoginDataUser {
   final String name;
   final String email;
   final String token;
-  LoginDataUser({required this.name, required this.email, required this.token});
+  final String kelas_name;
+  final int kelas_id;
+
+  LoginDataUser({
+    required this.name,
+    required this.email,
+    required this.token,
+    required this.kelas_name,
+    required this.kelas_id,
+  });
 
   factory LoginDataUser.fromJson(Map<String, dynamic> json) {
     return LoginDataUser(
       name: json['name'],
       email: json['email'],
       token: json['token'],
+      kelas_name: json['kelas_name'],
+      kelas_id: json['kelas_id']
     );
   }
 }

@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _isLoggesIn(BuildContext context) async {
     if (await UserDefault().getUserDefaultsLogged()) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => ProfileScreen()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomeScreen()));
     }else {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => LoginScreen()));
     }

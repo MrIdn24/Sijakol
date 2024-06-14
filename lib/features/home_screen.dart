@@ -11,11 +11,13 @@ import 'package:http/http.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:sijakol/features/auth/login_screen.dart';
-import 'package:sijakol/features/jadwal_kelas_screen.dart';
+import 'package:sijakol/features/jadwal_kelas/jadwal_kelas_screen.dart';
 import 'package:sijakol/features/mata_pelajaran_screen.dart';
-import 'package:sijakol/features/utils/basic_alert.dart';
+import 'package:sijakol/features/profile_screen.dart';
+import 'package:sijakol/helper/basic_alert.dart';
 import 'package:sijakol/helper/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sijakol/helper/route.dart';
 import 'package:sijakol/helper/user_default.dart';
 import 'package:sijakol/main.dart';
 import 'package:sijakol/providers/auth_provider.dart';
@@ -37,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   void _showLoginDialog() {
-    UserDefault().doLogout();
+    // UserDefault().doLogout();
   }
 
   @override
@@ -57,11 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        setState(() {
-                          print("Anjay");
-                          // _showLoginDialog();
-                          _showLoginDialog();
-                        });
+                        Navigator.of(context).push (
+                            SijakolRoute(
+                                screen: const ProfileScreen()
+                            ),
+                        );
                       },
                       child: Image.asset(
                           'assets/icons/ic_user.png',

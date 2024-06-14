@@ -5,8 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:sijakol/features/auth/login_screen.dart';
+import 'package:sijakol/features/jadwal_kelas/jadwal_hari_ini.dart';
+import 'package:sijakol/features/jadwal_kelas/jadwal_mingguan_bulanan.dart';
 import 'package:sijakol/helper/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sijakol/helper/user_default.dart';
 
 class JadwalKelasScreen extends StatefulWidget {
   const JadwalKelasScreen({super.key});
@@ -70,35 +73,41 @@ class _JadwalKelasScreenState extends State<JadwalKelasScreen> {
                       width: double.infinity,
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: 300,
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/icons/ic_planner.png',
-                                      height: 35,
-                                      fit: BoxFit.fitHeight,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text(
-                                        'Jadwal Hari Ini',
-                                        style: GoogleFonts.poppins(
-                                          color: ColorTextDark,
-                                          fontSize: 18,
-                                        )
-                                    )
-                                  ],
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => JadwalHariIniScreen()));
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: 300,
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/ic_planner.png',
+                                        height: 35,
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                      SizedBox(width: 16),
+                                      Text(
+                                          'Jadwal Hari Ini',
+                                          style: GoogleFonts.poppins(
+                                            color: ColorTextDark,
+                                            fontSize: 18,
+                                          )
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right,
-                                color: ColorTextDark,
-                                size: 35,
-                              ),
-                            ],
+                                Icon(
+                                  Icons.keyboard_arrow_right,
+                                  color: ColorTextDark,
+                                  size: 35,
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(height: 16),
                           Container(
@@ -112,7 +121,12 @@ class _JadwalKelasScreenState extends State<JadwalKelasScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => JadwalMingguanBulananScreen()
+                          )
+                      );
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 16),

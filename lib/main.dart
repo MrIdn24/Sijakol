@@ -6,12 +6,13 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart';
 import 'package:sijakol/features/auth/login_screen.dart';
 import 'package:sijakol/features/home_screen.dart';
-import 'package:sijakol/features/jadwal_kelas_screen.dart';
+import 'package:sijakol/features/jadwal_kelas/jadwal_kelas_screen.dart';
 import 'package:sijakol/features/splash_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:sijakol/features/utils/basic_alert.dart';
+import 'package:sijakol/helper/basic_alert.dart';
 import 'package:sijakol/providers/auth_provider.dart';
+import 'package:sijakol/providers/jadwals_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => JadwalProvider(),
+        )
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
@@ -38,6 +42,11 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: SplashScreen(),
           builder: BasicAlert.init(),
+          navigatorObservers: [
+            MyNavigatorObserver((BuildContext context) {
+              BasicAlert.context = context;
+            }),
+          ],
         ),
       ),
     );
