@@ -1,1 +1,1 @@
-# sijakol
+# Sijakol (Sistem Jadwal Sekolah)
