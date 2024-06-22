@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:sijakol/helper/basic_alert.dart';
 import 'package:sijakol/providers/auth_provider.dart';
 import 'package:sijakol/providers/jadwals_provider.dart';
+import 'package:sijakol/providers/profile_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => JadwalProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProfileProvider(),
         )
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(

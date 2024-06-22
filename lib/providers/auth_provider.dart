@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart';
 import 'package:flutter/services.dart';
 import 'package:sijakol/helper/base_url.dart';
+import 'package:sijakol/helper/basic_alert.dart';
 import 'package:sijakol/main.dart';
 import 'package:sijakol/response/login_response.dart';
 
@@ -35,6 +36,8 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } else {
+      notifyListeners();
+      BasicAlert().showBasicAlert(BasicState.error, response.reasonPhrase);
       return false;
     }
   }

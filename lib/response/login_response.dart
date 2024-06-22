@@ -26,6 +26,7 @@ class LoginDataUser {
   final String token;
   final String kelas_name;
   final int kelas_id;
+  final String profile_picture_url;
 
   LoginDataUser({
     required this.name,
@@ -33,6 +34,7 @@ class LoginDataUser {
     required this.token,
     required this.kelas_name,
     required this.kelas_id,
+    required this.profile_picture_url
   });
 
   factory LoginDataUser.fromJson(Map<String, dynamic> json) {
@@ -41,7 +43,8 @@ class LoginDataUser {
       email: json['email'],
       token: json['token'],
       kelas_name: json['kelas_name'],
-      kelas_id: json['kelas_id']
+      kelas_id: json['kelas_id'],
+      profile_picture_url: json['profile_picture_name']
     );
   }
 }

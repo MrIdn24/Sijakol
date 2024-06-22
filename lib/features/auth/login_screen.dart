@@ -210,6 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
             response.token,
             response.kelas_name,
             response.kelas_id.toString(),
+            response.profile_picture_url
           ]);
         }
         _directSuccesLogin();

@@ -14,8 +14,8 @@ import 'package:sijakol/helper/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sijakol/helper/user_default.dart';
 import 'package:sijakol/providers/jadwals_provider.dart';
-import 'package:sijakol/response/jadwal_hari_ini_response.dart';
-import 'package:sijakol/response/jadwal_mingguan_bulanan_response.dart';
+import 'package:sijakol/response/jadwal_response.dart';
+import 'package:sijakol/models/jadwal_mingguan_bulanan_model.dart';
 
 class JadwalMingguanBulananScreen extends StatefulWidget {
   const JadwalMingguanBulananScreen({super.key});
@@ -132,8 +132,12 @@ class _BulananChildState extends State<BulananChild> {
   String _selectedDayNumber = '';
   int _selectedDayIndex = 0;
 
+  bool isFirstEmpty = false;
+
   String? _selectedMonth = 'Januari';
   int? _selectedMonthNumber = 1;
+
+  var lengthOfJadwal = 0.0;
 
   final Map<String, int> _months = {
     'Januari': 1,
@@ -272,20 +276,31 @@ class _BulananChildState extends State<BulananChild> {
   }
 
   void _adjustDayIndex(JadwalProvider jadwalProvider) {
-    // Adjust selectedDayIndex to the last valid index if it is out of bounds
+    if (_currentWeekIndex < _weeks.length && _weeks[_currentWeekIndex].isEmpty) {
+      _nextWeek();
+      _previousWeek();
+      _weekName = 'Minggu ${_currentWeekIndex + 1}';
+      _weeks.removeAt(_currentWeekIndex);
+    }
+
     if (_selectedDayIndex >= _weeks[_currentWeekIndex].length) {
       _selectedDayIndex = _weeks[_currentWeekIndex].length - 1;
       _selectedDayIndex = _weeks[_currentWeekIndex].length - 1;
       _selectedDay = daysInIndonesian[DateFormat('EEEE').format(_weeks[_currentWeekIndex][_weeks[_currentWeekIndex].length - 1])] ?? '-';
       _setSelectedIndex(_weeks[_currentWeekIndex].length - 1);
     }
-    // Check if the day index is valid
+
     while (_selectedDayIndex > 0 &&
-        (jadwalProvider.jadwalMingguanBulananData.data == null ||
-            _currentWeekIndex >= jadwalProvider.jadwalMingguanBulananData.data!.length ||
-            jadwalProvider.jadwalMingguanBulananData.data![_currentWeekIndex].jadwalData == null ||
-            _selectedDayIndex >= jadwalProvider.jadwalMingguanBulananData.data![_currentWeekIndex].jadwalData!.length)) {
+        (jadwalProvider.jadwalMingguanBulananData.length == null ||
+            _currentWeekIndex >= jadwalProvider.jadwalMingguanBulananData.length ||
+            jadwalProvider.jadwalMingguanBulananData[_currentWeekIndex].jadwalData == null ||
+            _selectedDayIndex >= jadwalProvider.jadwalMingguanBulananData[_currentWeekIndex].jadwalData!.length)) {
       _selectedDayIndex--;
+
+      if (_selectedDayIndex < 0) {
+        _selectedDayIndex = 0;
+        break;
+      }
     }
   }
 
@@ -298,11 +313,15 @@ class _BulananChildState extends State<BulananChild> {
     });
   }
 
+  Future<dynamic> calculateLength(JadwalProvider jadwalProvider) async {
+    lengthOfJadwal = jadwalProvider.jadwalMingguanBulananData[_currentWeekIndex].jadwalData?[_selectedDayIndex].jadwal?.length.toDouble() ?? 0.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final jadwalProvider = Provider.of<JadwalProvider>(context);
     _adjustDayIndex(jadwalProvider);
-    var length = jadwalProvider.jadwalMingguanBulananData.data?[_currentWeekIndex].jadwalData?[_selectedDayIndex].jadwal?.length.toDouble() ?? 0.0;
+    calculateLength(jadwalProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -460,22 +479,22 @@ class _BulananChildState extends State<BulananChild> {
         ),
         Container(
           width: double.infinity,
-          height: (jadwalProvider.jadwalMingguanBulananData.data?[_currentWeekIndex].jadwalData?[_selectedDayIndex].jadwal?.length ?? 0) != 0 ? 215 * length - ((length - 1) * 60) : 300,
+          height: (lengthOfJadwal.toInt()) != 0 ? 215 * lengthOfJadwal - ((lengthOfJadwal - 1) * 60) : 300,
           padding: EdgeInsets.only(left: 10, right: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: Container(
-                child: (jadwalProvider.jadwalMingguanBulananData.data?[_currentWeekIndex].jadwalData?[_selectedDayIndex].jadwal?.length ?? 0) != 0 ? ListView.builder(
+                child: (lengthOfJadwal.toInt()) != 0 ? ListView.builder(
                   controller: _scrollController,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     return ChildBulananMingguan(
                         index,
-                        jadwalProvider.jadwalMingguanBulananData.data?[_currentWeekIndex].jadwalData?[_selectedDayIndex].jadwal?[index] ?? InnerJadwalData(),
+                        jadwalProvider.jadwalMingguanBulananData[_currentWeekIndex].jadwalData?[_selectedDayIndex].jadwal?[index] ?? InnerJadwalData(),
                     );
                   },
-                  itemCount: jadwalProvider.jadwalMingguanBulananData.data?[_currentWeekIndex].jadwalData?[_selectedDayIndex].jadwal?.length ?? 0,
+                  itemCount: lengthOfJadwal.toInt(),
                 ) : Padding(
                   padding: EdgeInsets.only(left: 16, right: 16),
                   child: Center(

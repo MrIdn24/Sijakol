@@ -1,18 +1,22 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 import 'package:sijakol/features/auth/login_screen.dart';
 import 'package:sijakol/helper/basic_alert.dart';
 import 'package:sijakol/helper/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sijakol/helper/route.dart';
 import 'package:sijakol/helper/user_default.dart';
+import 'package:sijakol/providers/profile_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -28,6 +32,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      requestProfile(context);
+    });
+  }
+
+  Future<void> requestProfile(BuildContext context) async {
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final requestProfile = await profileProvider.getUpdatedProfile();
+    final userDefaults = await UserDefault().getUserDefaults();
+
+    if (requestProfile) {
+      await UserDefault().saveUserDefaults([
+        profileProvider.profileData.nama ?? '',
+        profileProvider.profileData.email ?? '',
+        userDefaults[2],
+        profileProvider.profileData.kelas ?? '',
+        '0',
+        profileProvider.profileData.profile_picture_name ?? ''
+      ]);
+    }else {
+      _getUserDefault();
+      Provider.of<ProfileProvider>(context, listen: false).getProfilePicture();
+    }
+
     _getUserDefault();
   }
 
@@ -48,6 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = Provider.of<ProfileProvider>(context);
+    print("is Loading ${profileProvider.isLoading}");
     return SafeArea(child: Scaffold(
       body: Container(
         width: double.infinity,
@@ -123,10 +153,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 250,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                image: const DecorationImage(
-                                  image: AssetImage(
-                                    'assets/images/img-pp_aul.jpeg',
-                                  ),
+                                image: DecorationImage(
+                                  image:  profileProvider.isLoading
+                                      ? AssetImage('assets/images/img-default.png') as ImageProvider
+                                      : MemoryImage(profileProvider.imageData),
                                   fit: BoxFit.cover,
                                 ),
                                 border: Border.all(

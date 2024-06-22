@@ -11,17 +11,22 @@ import 'package:sijakol/helper/basic_alert.dart';
 import 'package:sijakol/helper/base_url.dart';
 import 'package:sijakol/helper/user_default.dart';
 import 'package:sijakol/main.dart';
-import 'package:sijakol/response/jadwal_hari_ini_response.dart';
-import 'package:sijakol/response/jadwal_mingguan_bulanan_response.dart';
+import 'package:sijakol/models/jadwal_hari_ini_model.dart';
+import 'package:sijakol/response/base_response.dart';
+import 'package:sijakol/response/jadwal_response.dart';
+import 'package:sijakol/models/jadwal_mingguan_bulanan_model.dart';
 import 'package:sijakol/response/login_response.dart';
 
 
 class JadwalProvider extends ChangeNotifier {
-  JadwalHariIniResponse _jadwalHariIniResponse = JadwalHariIniResponse(code: 0, message: '');
-  JadwalHariIniResponse get jadwalHariIniData => _jadwalHariIniResponse;
+  List<JadwalHariIniModel> _jadwalHariIniResponse = [];
+  List<JadwalHariIniModel> get jadwalHariIniData => _jadwalHariIniResponse;
 
-  JadwalMingguanBulananResponse _jadwalMingguanBulananResponse = JadwalMingguanBulananResponse(code: 0, message: '');
-  JadwalMingguanBulananResponse get jadwalMingguanBulananData => _jadwalMingguanBulananResponse;
+  String _message = "";
+  String get message => _message;
+
+  List<JadwalMingguanBulananModel> _jadwalMingguanBulananResponse = [];
+  List<JadwalMingguanBulananModel> get jadwalMingguanBulananData => _jadwalMingguanBulananResponse;
   List<String> userDefault = [];
 
   Future<void> _getUserDefault() async {
@@ -31,7 +36,7 @@ class JadwalProvider extends ChangeNotifier {
   Future<bool> getjadwalHariIni() async {
     BasicAlert().showBasicAlert(BasicState.loading, "");
     _getUserDefault().then((value) async {
-      var endpointUrl = BaseUrl().baseURL + "/api/jadwal/hari-ini";
+      var endpointUrl = "${BaseUrl().baseURL}/api/jadwal/hari-ini";
       final uri = Uri.parse(endpointUrl).replace(queryParameters: {
       });
       final response = await http.get(
@@ -44,12 +49,19 @@ class JadwalProvider extends ChangeNotifier {
       );
 
       final Map<String, dynamic> result = json.decode(response.body);
-      _jadwalHariIniResponse = JadwalHariIniResponse.fromJson(result);
+      final finalResponse = JadwalResponse<List<JadwalHariIniModel>>.fromJson(
+        result,
+            (dataJson) => (dataJson as List).map((item) => JadwalHariIniModel.fromJson(item)).toList(),
+      );
+      _jadwalHariIniResponse = finalResponse.data ?? [];
+      _message = finalResponse.message;
       if (response.statusCode == 200) {
         notifyListeners();
         BasicAlert().showBasicAlert(BasicState.none, '');
         return true;
       } else {
+        notifyListeners();
+        BasicAlert().showBasicAlert(BasicState.error, response.reasonPhrase);
         return false;
       }
     });
@@ -73,13 +85,19 @@ class JadwalProvider extends ChangeNotifier {
       );
 
       final Map<String, dynamic> result = json.decode(response.body);
-      print(result['data']);
-      _jadwalMingguanBulananResponse = JadwalMingguanBulananResponse.fromJson(result);
+      final finalResponse = JadwalResponse<List<JadwalMingguanBulananModel>>.fromJson(
+        result,
+            (dataJson) => (dataJson as List).map((item) => JadwalMingguanBulananModel.fromJson(item)).toList(),
+      );
+      _jadwalMingguanBulananResponse = finalResponse.data ?? [];
+      _message = finalResponse.message;
       if (response.statusCode == 200) {
         notifyListeners();
         BasicAlert().showBasicAlert(BasicState.none, '');
         return true;
       } else {
+        notifyListeners();
+        BasicAlert().showBasicAlert(BasicState.error, response.reasonPhrase);
         return false;
       }
     });

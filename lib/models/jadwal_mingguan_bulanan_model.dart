@@ -1,33 +1,11 @@
-class JadwalMingguanBulananResponse {
-  int code;
-  String message;
-  List<Data>? data;
-
-  JadwalMingguanBulananResponse({
-    required this.code,
-    required this.message,
-    this.data
-  });
-
-  factory JadwalMingguanBulananResponse.fromJson(Map<String, dynamic> json) {
-    return JadwalMingguanBulananResponse(
-      code: json['code'],
-      message: json['message'],
-      data: json['data'] != null
-          ? (json['data'] as List).map((item) => Data.fromJson(item)).toList()
-          : null,
-    );
-  }
-}
-
-class Data {
+class JadwalMingguanBulananModel {
   int? minggu;
   List<JadwalData>? jadwalData;
 
-  Data({this.minggu, this.jadwalData});
+  JadwalMingguanBulananModel({this.minggu, this.jadwalData});
 
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
+  factory JadwalMingguanBulananModel.fromJson(Map<String, dynamic> json) {
+    return JadwalMingguanBulananModel(
       minggu: json['minggu'],
       jadwalData: json['jadwal'] != null
           ? (json['jadwal'] as List).map((item) => JadwalData.fromJson(item)).toList()

@@ -10,8 +10,9 @@ import 'package:sijakol/features/auth/login_screen.dart';
 import 'package:sijakol/helper/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sijakol/helper/user_default.dart';
+import 'package:sijakol/models/jadwal_hari_ini_model.dart';
 import 'package:sijakol/providers/jadwals_provider.dart';
-import 'package:sijakol/response/jadwal_hari_ini_response.dart';
+import 'package:sijakol/response/jadwal_response.dart';
 
 class JadwalHariIniScreen extends StatefulWidget {
   const JadwalHariIniScreen({super.key});
@@ -92,16 +93,16 @@ class _JadwalHariIniScreenState extends State<JadwalHariIniScreen> {
                 children: [
                   Expanded(
                     child: Container(
-                      child: (jadwalProvider.jadwalHariIniData.data?.length ?? 0) != 0 ? ListView.builder(
+                      child: (jadwalProvider.jadwalHariIniData.length) != 0 ? ListView.builder(
                         controller: _scrollController,
                         itemBuilder: (BuildContext context, int index) {
-                          return ChildProduct(index, jadwalProvider.jadwalHariIniData.data?[index] ?? JadwalData());
+                          return ChildProduct(index, jadwalProvider.jadwalHariIniData[index]);
                         },
-                        itemCount: jadwalProvider.jadwalHariIniData.data?.length ?? 0,
+                        itemCount: jadwalProvider.jadwalHariIniData.length,
                       ) : Padding(
                         padding: const EdgeInsets.only(left: 16, right: 16),
                         child: Center(child: Text(
-                            jadwalProvider.jadwalHariIniData.message,
+                            jadwalProvider.message,
                             style: GoogleFonts.poppins(
                                 color: ColorTextDark,
                                 fontSize: 20,
@@ -149,9 +150,9 @@ class ChildProduct extends StatelessWidget {
   };
 
   int index = 0;
-  JadwalData? jadwalData = JadwalData();
+  JadwalHariIniModel? jadwalData = JadwalHariIniModel();
 
-  ChildProduct(int index, JadwalData jadwalData) {
+  ChildProduct(int index, JadwalHariIniModel jadwalData) {
     this.index = index;
     this.jadwalData = jadwalData;
   }
