@@ -1,0 +1,49 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - main  # ubah jika kamu pakai branch lain
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout source code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'  # sesuaikan dengan versi kamu
+
+      # Ambil dependency
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Ambil versi dari pubspec.yaml dan simpan ke ENV
+      - name: Get app version from pubspec.yaml
+        id: get_version
+        run: |
+          version=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d "+" -f1)
+          echo "APP_VERSION=$version" >> $GITHUB_ENV
+
+      # Build APK release
+      - name: Build APK release
+        run: flutter build apk --release
+
+      # Rename APK sesuai versi
+      - name: Rename APK with version
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk \
+             build/app/outputs/flutter-apk/Sijakol_${{ env.APP_VERSION }}.apk
+
+      # Upload artifact (hasil APK)
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Sjiakol_${{ env.APP_VERSION }}.apk
+          path: build/app/outputs/flutter-apk/Sijakol_${{ env.APP_VERSION }}.apk
